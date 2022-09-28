@@ -34,18 +34,18 @@ jobs:
             export PATH="${{ github.workspace }}/mingw64:${{ github.workspace }}/mingw64/bin:${{ github.workspace }}/msys64/usr/bin:/usr/bin" &&
             cd lua-5.4.4 && 
             g++ --version &&
-            make mingw install INSTALL_TOP=./${{ env.installationPath }}
+            make mingw install INSTALL_TOP="${{ github.workspace }}/${{ env.installationPath }}"
             
       - name: Archive Release
         uses: thedoctor0/zip-release@master
         with:
           type: 'zip'
-          directory: "lua-5.4.4/${{ env.installationPath }}"
+          directory: "${{ github.workspace }}/${{ env.installationPath }}"
           filename: "${{ env.mingwTargetZip }}"
           
       - name: Release prebuilt
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "lua-5.4.4/${{ env.installationPath }}/${{ env.mingwTargetZip }}"
+          artifacts: "${{ github.workspace }}/${{ env.installationPath }}/${{ env.mingwTargetZip }}"
           allowUpdates: true
           token: ${{ secrets.GITHUB_TOKEN }}
