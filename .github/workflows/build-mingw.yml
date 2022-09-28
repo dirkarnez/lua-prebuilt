@@ -33,7 +33,7 @@ jobs:
             export PATH="${{ github.workspace }}/mingw64:${{ github.workspace }}/mingw64/bin:${{ github.workspace }}/msys64/usr/bin:/usr/bin" &&
             cd lua-5.4.4 && 
             g++ --version &&
-            mingw32-make mingw all
+            make mingw install
             
       - name: Archive Release
         uses: thedoctor0/zip-release@master
