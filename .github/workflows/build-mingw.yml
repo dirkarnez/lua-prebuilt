@@ -11,6 +11,7 @@ jobs:
     runs-on: windows-2019
     env:
       libraryName: lua
+      installationPath: lua-installation
       mingwTargetZip: lua-${{ github.ref_name }}-x86_64-posix-seh-rev0-8.1.0.zip
     steps:
       - name: download
@@ -33,18 +34,18 @@ jobs:
             export PATH="${{ github.workspace }}/mingw64:${{ github.workspace }}/mingw64/bin:${{ github.workspace }}/msys64/usr/bin:/usr/bin" &&
             cd lua-5.4.4 && 
             g++ --version &&
-            make mingw install
+            make mingw install INSTALL_TOP=./${{ env.installationPath }}
             
       - name: Archive Release
         uses: thedoctor0/zip-release@master
         with:
           type: 'zip'
-          directory: "lua-5.4.4"
+          directory: "lua-5.4.4/${{ env.installationPath }}"
           filename: "${{ env.mingwTargetZip }}"
           
       - name: Release prebuilt
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "lua-5.4.4/${{ env.mingwTargetZip }}"
+          artifacts: "lua-5.4.4/${{ env.installationPath }}/${{ env.mingwTargetZip }}"
           allowUpdates: true
           token: ${{ secrets.GITHUB_TOKEN }}
