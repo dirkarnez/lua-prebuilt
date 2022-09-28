@@ -1,35 +1,39 @@
-name: cpp-mingw-prebuilt-release-actions-workflow
+name: cpp-msys-mingw-prebuilt-release-actions-workflow
 on:
   push:
     # Sequence of patterns matched against refs/tags
     tags:
       - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
-      
+
 jobs:
   build:
     name: Create Release
     runs-on: windows-2019
     env:
       libraryName: lua
-      tagName: v5.4.4
       mingwTargetZip: lua-${{ github.ref_name }}-x86_64-posix-seh-rev0-8.1.0.zip
     steps:
       - name: download
         shell: cmd
         run: curl -R -O http://www.lua.org/ftp/lua-5.4.4.tar.gz && tar zxf lua-5.4.4.tar.gz
         
+      - name: Install MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          install: make
+          
       - name: curl x86_64-8.1.0-release-posix-seh-rt_v6-rev0.7z
         shell: cmd
         run:  cd /d ${{ github.workspace }} && curl https://github.com/2641797006/c/blob/master/GCC-zip/x86_64-8.1.0-release-posix-seh-rt_v6-rev0.7z?raw=true -L --output x86_64-8.1.0-release-posix-seh-rt_v6-rev0.7z && dir && 7z.exe x x86_64-8.1.0-release-posix-seh-rt_v6-rev0.7z
         
       - name: set PATH, check mingw version, cmake generate, build and install
-        shell: cmd
+        shell: msys2 {0}
         run: |
-            set PATH=^
-            ${{ github.workspace }}\mingw64;^
-            ${{ github.workspace }}\mingw64\bin;^
-            gcc --version &&^
-            cd lua-5.4.4 && mingw32-make mingw all
+            export PATH="${{ github.workspace }}/mingw64:${{ github.workspace }}/mingw64/bin:${{ github.workspace }}/msys64/usr/bin:/usr/bin" &&
+            cd lua-5.4.4 && 
+            g++ --version &&
+            mingw32-make mingw all
             
       - name: Archive Release
         uses: thedoctor0/zip-release@master
