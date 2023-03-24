@@ -20,6 +20,7 @@ Prebuilt of [The Programming Language Lua](https://www.lua.org/) official releas
 
     target_include_directories(lua PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include/lua")
     ```
+      - [Apolo/CMakeLists.txt at master · MikeLankamp/Apolo](https://github.com/MikeLankamp/Apolo/blob/master/lib/lua-5.3.5/CMakeLists.txt)
 - [ ] While using Lua as static library, `liblua.dll.a` should not be generated
 - [ ] Modifying / overwritten official `#define`s for better use on Windows
 
